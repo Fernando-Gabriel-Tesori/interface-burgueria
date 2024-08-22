@@ -3,7 +3,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { toast, ToastContainer } from 'react-toastify';
-//import { api } from '../../services/api';
+import api from '../../services/api'; // Corrigido para importação padrão
+import { useNavigate } from 'react-router-dom';
 
 import {
     Container,
@@ -18,26 +19,25 @@ import {
 import Logo from '../../assets/logo.png';
 import { Button } from '../../components/Button';
 
-// Definição do schema (remova a duplicata)
-const schema = yup.object({
-    name: yup.string().required('Nome é obrigatorio'),
-    email: yup
-        .string()
-        .email('Digite um e-mail válido')
-        .required('O e-mail é obrigatório'),
-    password: yup
-        .string()
-        .min(8, 'A senha deve ter pelo menos 8 caracteres')
-        .required('Digite uma senha'),
-    ConfirmPassword: yup
-        .string()
-        .min(8, 'A senha deve ter pelo menos 8 caracteres')
-        .oneOf([yup.ref('password')], 'As senhas devm ser iguais')
-        .required('Confirme sua senha'),
-})
-.required();
+export const Register = () => {
+    const navigate = useNavigate();
+    const schema = yup.object({
+        name: yup.string().required('Nome é obrigatório'),
+        email: yup
+            .string()
+            .email('Digite um e-mail válido')
+            .required('O e-mail é obrigatório'),
+        password: yup
+            .string()
+            .min(8, 'A senha deve ter pelo menos 8 caracteres')
+            .required('Digite uma senha'),
+        ConfirmPassword: yup
+            .string()
+            .min(8, 'A senha deve ter pelo menos 8 caracteres')
+            .oneOf([yup.ref('password')], 'As senhas devem ser iguais')
+            .required('Confirme sua senha'),
+    }).required();
 
-export function Register() {
     const {
         register,
         handleSubmit,
@@ -48,32 +48,26 @@ export function Register() {
 
     const onSubmit = async (data) => {
         try {
-            const response = await toast.promise( 
-                api.post("/sessions", {
+            const { status } = await api.post('/users', {
+                name: data.name,
                 email: data.email,
                 password: data.password,
-            }),
-            {
-                pending: 'Verificando dados',
-                success: 'Cadastro efetuado com sucesso ',
-                error: 'ops algo deu errado! Tente noavemente.'
-            },
-        );
-            
-            
-            
-            
-            
-            
-            
+            }, {
+                validateStatus: () => true,
+            });
 
-            
-
-            console.log(response.data);
-            // Talvez redirecionar ou salvar token na autenticação aqui
+            if (status === 200 || status === 201) {
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000);
+                toast.success('Conta criada com sucesso!');
+            } else if (status === 409) {
+                toast.error('Email já cadastrado! Faça login para continuar');
+            } else {
+                throw new Error();
+            }
         } catch (error) {
-            console.error("Erro na solicitação", error);
-            // Exibir mensagem de erro ao usuário, se necessário
+            toast.error('😒 Falha no sistema! Tente novamente');
         }
     };
 
@@ -83,12 +77,9 @@ export function Register() {
                 <img src={Logo} alt="Logo Devburguer" />
             </LeftContainer>
             <RightContainer>
-                <Title>
-                   Criar conta
-                </Title>
+                <Title>Criar conta</Title>
                 <Form onSubmit={handleSubmit(onSubmit)}>
-
-                <InputContainer>
+                    <InputContainer>
                         <label>Nome</label>
                         <input type="text" {...register('name')} />
                         {errors.name && (
@@ -111,16 +102,16 @@ export function Register() {
                     </InputContainer>
                     <InputContainer>
                         <label>Confirmar senha</label>
-                        <input type="Password" {...register('ConfirmPassword')} />
+                        <input type="password" {...register('ConfirmPassword')} />
                         {errors.ConfirmPassword && (
                             <ErrorMessage>{errors.ConfirmPassword.message}</ErrorMessage>
                         )}
                     </InputContainer>
                     <Button type="submit">Criar Conta</Button>
                 </Form>
-                <Link>Já possui conta? Clique aqui</Link>
+                <p>Já possui conta? <Link to="/login">Clique aqui</Link></p>
             </RightContainer>
             <ToastContainer autoClose={2000} theme="colored" />
         </Container>
     );
-}
+};

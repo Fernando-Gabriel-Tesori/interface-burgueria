@@ -2,8 +2,8 @@ import React from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-//import { api } from '../../services/api';
 
 import {
     Container,
@@ -15,10 +15,12 @@ import {
     Link,
     ErrorMessage,
 } from './styles';
+
 import Logo from '../../assets/logo.png';
 import { Button } from '../../components/Button';
+import api from '../../services/api';
 
-// Definição do schema (remova a duplicata)
+// Definição do schema de validação com Yup
 const schema = yup.object({
     email: yup
         .string()
@@ -31,42 +33,49 @@ const schema = yup.object({
 }).required();
 
 export function Login() {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
+    const navigate = useNavigate();
+
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors } 
     } = useForm({
         resolver: yupResolver(schema),
     });
 
+    // Função para submissão do formulário
     const onSubmit = async (data) => {
         try {
-            const response = await toast.promise( 
-                api.post("/sessions", {
-                email: data.email,
-                password: data.password,
-            }),
-            {
-                pending: 'Verificando dados',
-                success: 'Seja bem-vindo',
-                error: 'Erro verifica senha ou email'
-            },
-        );
-            
-            
-            
-            
-            
-            
-            
+            const response = await toast.promise(
+                api.post('/sessions', {
+                    email: data.email,
+                    password: data.password,
+                }),
+                {
+                    pending: 'Verificando dados...',
+                    success: {
+                        render(){
+                            setTimeout(()=>{
+                                navigate('/');
+                            }, 2000);
+                         return 'Seja Bem-vindo(a)👌!';
+                        },
+                    },
+                    error: 'Erro, verifique senha ou email',
+                },
+            );
 
+            const { token } = response.data;
             
+            localStorage.setItem('token', token);
 
-            console.log(response.data);
-            // Talvez redirecionar ou salvar token na autenticação aqui
+            setTimeout(() => {
+                navigate('/');
+            }, 2000);
+
         } catch (error) {
-            console.error("Erro na solicitação", error);
-            // Exibir mensagem de erro ao usuário, se necessário
+            console.error('Erro ao realizar login:', error);
+            toast.error('Erro ao realizar login, tente novamente.');
         }
     };
 
@@ -84,21 +93,27 @@ export function Login() {
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <InputContainer>
                         <label>Email</label>
-                        <input type="email" {...register('email')} />
+                        <input 
+                            type="email" 
+                            {...register('email')} 
+                        />
                         {errors.email && (
                             <ErrorMessage>{errors.email.message}</ErrorMessage>
                         )}
                     </InputContainer>
                     <InputContainer>
                         <label>Senha</label>
-                        <input type="password" {...register('password')} />
+                        <input 
+                            type="password" 
+                            {...register('password')} 
+                        />
                         {errors.password && (
                             <ErrorMessage>{errors.password.message}</ErrorMessage>
                         )}
                     </InputContainer>
                     <Button type="submit">Entrar</Button>
                 </Form>
-                <Link>Não possui conta? Clique aqui</Link>
+                <p>Não possui conta? <Link to="/cadastro">Clique aqui</Link></p>
             </RightContainer>
             <ToastContainer autoClose={2000} theme="colored" />
         </Container>

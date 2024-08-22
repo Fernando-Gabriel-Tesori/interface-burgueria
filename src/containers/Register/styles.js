@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import BackgroundLogin from '../../assets/wall.png';
 import Background from '../../assets/background.png';
+import { Link as ReactLink } from 'react-router-dom';
 
 const colors = {
   primary: '#5b3464',
@@ -90,18 +91,19 @@ export const InputContainer = styled.div`
   }
 `;
 
-export const Link = styled.a`
-  color: ${colors.primary};
+export const Link = styled(ReactLink)`
+  text-decoration: none;
+  color: #ffffff;
   text-decoration: none;
   font-size: 14px;
   cursor: pointer;
   text-align: center;  
   
-
   &:hover {
     text-decoration: underline;
-  }
+  };
 `;
+
 
 export const ErrorMessage = styled.p`
   color: #e74c3c;
