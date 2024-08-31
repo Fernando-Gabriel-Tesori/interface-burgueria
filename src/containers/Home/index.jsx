@@ -1,7 +1,7 @@
 import React from 'react';
 import { CategoriesCarousel } from '../../components/CategoriesCarousel';
-import { Banner, Container, Content } from "./styles";
-import api from '../../services/api';
+import { OffersCarousel } from '../../components/OffersCarousel'
+import { Banner, Container } from "./styles";
 
 export function Home() {
     return (
@@ -9,17 +9,12 @@ export function Home() {
             <Banner>
                 <h1>Bem-vindo(a)!</h1>
             </Banner>
+            <div>
             <Container>
-                <Content>
                     <CategoriesCarousel />
-                    <div>
-                        Carrossel Categorias
-                    </div>
-                    <div>
-                        Carrossel Produtos
-                    </div>
-                </Content>
+                    <OffersCarousel />
             </Container>
+            </div>
         </main>
     );
 }

@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
-
-import { ContainerButton } from './styles'
+import { ContainerButton } from './styles';
 
 export function Button({ children, ...props }) {
     return (
@@ -8,6 +7,6 @@ export function Button({ children, ...props }) {
     );
 }
 
-Button.prototypes = {
-    children: PropTypes.string,
+Button.propTypes = {
+    children: PropTypes.node.isRequired,
 };

@@ -30,4 +30,6 @@ export const Container = styled.section`
   height: 500px;
 `;
 
-export const Content = styled.div``;
+export const Content = styled.div`
+ padding: 70px;
+`;

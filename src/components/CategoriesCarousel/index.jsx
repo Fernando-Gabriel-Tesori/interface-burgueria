@@ -8,10 +8,9 @@ export function CategoriesCarousel() {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        // Função assíncrona para carregar as categorias
         const loadCategories = async () => {
             try {
-                const { data } = await api.get('/categories'); // Defina o endpoint correto para buscar as categorias
+                const { data } = await api.get('/categories');
                 setCategories(data);
             } catch (error) {
                 console.error('Erro ao carregar categorias:', error);
@@ -21,7 +20,6 @@ export function CategoriesCarousel() {
         loadCategories();
     }, []);
 
-    // Configurações responsivas para o carrossel
     const responsive = {
         superLargeDesktop: {
             breakpoint: { max: 4000, min: 3000 },
@@ -33,7 +31,7 @@ export function CategoriesCarousel() {
         },
         tablet: {
             breakpoint: { max: 1280, min: 690 },
-            items: 3, // Ajustado para 3 itens no tablet para uma melhor exibição
+            items: 3,
         },
         mobile: {
             breakpoint: { max: 690, min: 0 },
@@ -44,14 +42,13 @@ export function CategoriesCarousel() {
     return (
         <Container>
             <Title>Categorias</Title>
-
             <Carousel
                 responsive={responsive}
-                infinite={true}
-                partialVisbile={false}
-                itemClass='carousel-item'
+                infinite
+                partialVisible={false}
+                itemClass="carousel-item"
             >
-                {categories.map((category) => (
+                {categories.map(category => (
                     <ContainerItems key={category.id} imageUrl={category.url}>
                         <p>{category.name}</p>
                     </ContainerItems>
@@ -60,4 +57,3 @@ export function CategoriesCarousel() {
         </Container>
     );
 }
-
