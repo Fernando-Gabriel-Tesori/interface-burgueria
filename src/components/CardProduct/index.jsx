@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { CardImage, Container } from './styles';
 
-
 export function CardProduct({ product }) {
     return (
         <Container>
@@ -10,11 +9,14 @@ export function CardProduct({ product }) {
                 <p>{product.name}</p>
                 <strong>{product.currencyValue}</strong>
             </div>
-            <CardProduct />
         </Container>
     );
 }
 
 CardProduct.propTypes = {
-    product: PropTypes.object,
+    product: PropTypes.shape({
+        imageUrl: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        currencyValue: PropTypes.string.isRequired,
+    }).isRequired,
 };
